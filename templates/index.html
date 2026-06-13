@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chatbot</title>
+<style>
+body {
+    font-family: 'Times New Roman';
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #4fc3f7, #0288d1, #81d4fa, #03a9f4);
+    background-size: 400% 400%;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    animation: waterBg 15s ease infinite;
+}
+@keyframes waterBg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+h1 {
+    text-align: center;
+    color: #fff;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
+    font-size: 2em;
+    margin-bottom: 20px;
+    animation: fadeIn 1s ease forwards;
+}
+#chatbox {
+    background: #ffffffdd;
+    height: 450px;
+    padding: 20px;
+    border-radius: 25px;
+    overflow-y: auto;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+    scroll-behavior: smooth;
+    transition: all 0.3s ease;
+}
+.message {
+    padding: 15px 20px;
+    margin: 10px 0;
+    max-width: 75%;
+    border-radius: 25px;
+    word-wrap: break-word;
+    font-size: 16px;
+    line-height: 1.5;
+    position: relative;
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+    animation: showMessage 0.6s forwards;
+}
+@keyframes showMessage {
+    0% { opacity: 0; transform: translateY(30px) scale(0.9); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.user {
+    background: linear-gradient(135deg, #42a5f5, #1e88e5);
+    color: #fff;
+    margin-left: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    animation-name: popRight;
+}
+@keyframes popRight {
+    0% { transform: translateX(50px) scale(0.8); opacity: 0; }
+    100% { transform: translateX(0) scale(1); opacity: 1; }
+}
+.bot {
+    background: linear-gradient(135deg, #4fc3f7, #0288d1, #81d4fa, #03a9f4);
+    color: #fff;
+    margin-right: auto;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    border: 2px solid rgba(255,255,255,0.3);
+    position: relative;
+    overflow: hidden;
+    animation-name: popLeft, wave;
+    animation-duration: 0.6s, 4s;
+    animation-timing-function: ease, ease-in-out;
+    animation-iteration-count: 1, infinite;
+    animation-fill-mode: forwards;
+    border-radius: 25px;
+}
+@keyframes popLeft {
+    0% { transform: translateX(-50px) scale(0.8); opacity: 0; }
+    100% { transform: translateX(0) scale(1); opacity: 1; }
+}
+@keyframes wave {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+.bot::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 10%, transparent 10.01%);
+    background-size: 50px 50px;
+    animation: ripple 4s linear infinite;
+    pointer-events: none;
+    border-radius: 50%;
+}
+@keyframes ripple {
+    0% { transform: scale(0) translate(0,0); opacity: 0.5; }
+    50% { transform: scale(1) translate(0,0); opacity: 0.2; }
+    100% { transform: scale(0) translate(0,0); opacity: 0.5; }
+}
+.message:hover {
+    transform: scale(1.03);
+    transition: all 0.3s ease;
+}
+#inputContainer {
+    display: flex;
+    margin-top: 15px;
+    gap: 10px;
+}
+#message {
+    flex: 1;
+    padding: 15px 20px;
+    border-radius: 25px;
+    border: none;
+    font-size: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    outline: none;
+    transition: all 0.3s ease;
+}
+#message:focus {
+    box-shadow: 0 0 15px rgba(66,165,245,0.6);
+}
+#sendBtn {
+    padding: 15px 25px;
+    border-radius: 25px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #ff5252, #ff1744);
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(255,82,82,0.4);
+    animation: pulse 2s infinite;
+}
+#sendBtn:hover {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #ff1744, #d50000);
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 5px 20px rgba(255,82,82,0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 10px 30px rgba(255,82,82,0.6); }
+}
+#chatbox::-webkit-scrollbar {
+    width: 8px;
+}
+#chatbox::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+#chatbox::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}
+.typing {
+    display: inline-block;
+    width: 60px;
+    height: 12px;
+}
+.typing span {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin: 0 3px;
+    background: #fff;
+    border-radius: 50%;
+    animation: typingDots 1s infinite;
+}
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingDots {
+    0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+    40% { transform: scale(1); opacity: 1; }
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+<h1>🌊  INGRES AI 🌊</h1>
+<div id="chatbox"></div>
+<div id="inputContainer">
+<input type="text" id="message" placeholder="Type a message...">
+<button id="sendBtn">Send</button>
+</div>
+<script>
+const chatbox = document.getElementById("chatbox");
+const messageInput = document.getElementById("message");
+const sendBtn = document.getElementById("sendBtn");
+const I18N = {{ i18n | tojson | safe }};
+
+window.addEventListener("DOMContentLoaded", () => {
+    const botMsg = document.createElement("div");
+    botMsg.className = "message bot";
+    botMsg.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+    chatbox.appendChild(botMsg);
+    chatbox.scrollTop = chatbox.scrollHeight;
+    setTimeout(() => {
+        botMsg.textContent = I18N.en.greeting || "Hello! 🌊";
+    }, 1200);
+});
+
+async function sendMessage() {
+    const message = messageInput.value.trim();
+    if (!message) return;
+
+    const userMsg = document.createElement("div");
+    userMsg.className = "message user";
+    userMsg.textContent = "You: " + message;
+    chatbox.appendChild(userMsg);
+    chatbox.scrollTop = chatbox.scrollHeight;
+
+    const botMsg = document.createElement("div");
+    botMsg.className = "message bot";
+    botMsg.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+    chatbox.appendChild(botMsg);
+    chatbox.scrollTop = chatbox.scrollHeight;
+
+    try {
+        const response = await fetch("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message })
+        });
+        const data = await response.json();
+
+        setTimeout(() => {
+            botMsg.innerHTML = "Ingres: " + data.response + " 🤖";
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }, 1200);
+    } catch {
+        setTimeout(() => {
+            botMsg.textContent = "Bot: Server error! ❌";
+        }, 1200);
+    }
+
+    messageInput.value = "";
+    messageInput.focus();
+}
+
+sendBtn.addEventListener("click", sendMessage);
+messageInput.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
+</script>
+</body>
+</html>
